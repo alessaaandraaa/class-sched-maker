@@ -1,4 +1,3 @@
-import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { formSchema } from "../lib/types";
@@ -8,30 +7,38 @@ import { HexColorPicker } from "react-colorful";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { days } from "@/dates";
+import { Checkbox } from "./ui/checkbox";
+import type { eventType } from "../lib/types";
 
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "../components/ui/field";
 import { Input } from "../components/ui/input";
+import { InputGroup, InputGroupTextarea } from "../components/ui/input-group";
+
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroupTextarea,
-} from "../components/ui/input-group";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
-export function EventForm() {
+type formProps = {
+  onAddEvent: (event: eventType) => void;
+};
+
+export function EventForm({ onAddEvent }: formProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,20 +46,32 @@ export function EventForm() {
       name: "",
       group: 0,
       classroom: "",
-      day: "",
-      start: "7:30",
-      end: "5:00",
+      day: [],
+      startHour: 0,
+      startMinute: "00",
+      endHour: 0,
+      endMinute: "00",
       bg_color: "",
       text_color: "",
     },
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    const events: (typeof data)[] = JSON.parse(
+    console.log("Submitting...");
+
+    const events: eventType[] = JSON.parse(
       localStorage.getItem("events") || "[]"
     );
-    events.push(data);
-    localStorage.setItem("events", JSON.stringify(events));
+
+    const { startHour, startMinute, endHour, endMinute, ...rest } = data;
+
+    const payload = {
+      ...rest,
+      start: `${String(startHour).padStart(2, "0")}:${startMinute}`,
+      end: `${String(endHour).padStart(2, "0")}:${endMinute}`,
+    };
+
+    onAddEvent(payload);
   }
 
   return (
@@ -111,6 +130,30 @@ export function EventForm() {
               )}
             />
             <Controller
+              name="classroom"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  orientation="horizontal"
+                >
+                  <FieldLabel htmlFor="form-rhf-demo-title">
+                    Classroom
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="form-rhf-demo-classcode"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="LB445TC TC"
+                    autoComplete="off"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
               name="group"
               control={form.control}
               render={({ field, fieldState }) => (
@@ -139,52 +182,125 @@ export function EventForm() {
               )}
             />
             <Controller
-              name="start"
+              name="day"
               control={form.control}
+              defaultValue={[]}
               render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  orientation="horizontal"
-                >
-                  <FieldLabel className="flex-1 pr-1">Start</FieldLabel>
+                <div className="flex flex-col gap-2">
+                  <FieldLabel>Days</FieldLabel>
 
-                  <Input
-                    {...field}
-                    type="time"
-                    aria-invalid={fieldState.invalid}
-                    className="flex-1"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="flex items-center gap-3 p-2 rounded-md border border-gray-700 bg-gray-800 hover:bg-gray-700 transition-all text-black text-xs"
+                      >
+                        {field.value?.length > 0
+                          ? field.value.join(", ")
+                          : "Select Days"}
+                      </button>
+                    </PopoverTrigger>
 
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
+                    <PopoverContent className="w-48 p-3 bg-gray-900 border-gray-700 flex flex-col gap-3">
+                      {days.map((dayName) => (
+                        <div key={dayName} className="flex items-center gap-3">
+                          <Checkbox
+                            id={`check-${dayName}`}
+                            className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-gray-500"
+                            checked={field.value?.includes(dayName)}
+                            onCheckedChange={(checked) => {
+                              const newValue = checked
+                                ? [...(field.value || []), dayName]
+                                : field.value?.filter(
+                                    (v: string) => v !== dayName
+                                  );
+                              field.onChange(newValue);
+                            }}
+                          />
+                          <FieldLabel
+                            htmlFor={`check-${dayName}`}
+                            className={`text-xs cursor-pointer transition-colors ${
+                              field.value?.includes(dayName)
+                                ? "text-blue-400 font-bold" // Active state
+                                : "text-gray-400 font-normal" // Inactive state
+                            }`}
+                          >
+                            {dayName}
+                          </FieldLabel>
+                        </div>
+                      ))}
+                    </PopoverContent>
+                  </Popover>
+                </div>
               )}
             />
-
-            <Controller
-              name="end"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  orientation="horizontal"
-                >
-                  <FieldLabel className="whitespace-nowrap">End</FieldLabel>
-
+            <div className="flex gap-2">
+              <FieldLabel>Start</FieldLabel>
+              <Controller
+                name="startHour"
+                control={form.control}
+                render={({ field }) => (
                   <Input
                     {...field}
-                    type="time"
-                    aria-invalid={fieldState.invalid}
-                    className="flex-1"
+                    type="number"
+                    min={0}
+                    max={23}
+                    className="w-16 text-center"
+                    onChange={(e) => field.onChange(Number(e.target.value))}
                   />
+                )}
+              />
+              <p>:</p>
+              <Controller
+                name="startMinute"
+                control={form.control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="00">00</SelectItem>
+                      <SelectItem value="30">30</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            <div className="flex gap-2">
+              <FieldLabel>End</FieldLabel>
+              <Controller
+                name="endHour"
+                control={form.control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="number"
+                    min={0}
+                    max={23}
+                    className="w-16 text-center"
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
+                )}
+              />
+              <p>:</p>
+              <Controller
+                name="endMinute"
+                control={form.control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="00">00</SelectItem>
+                      <SelectItem value="30">30</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
 
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
             <Controller
               name="bg_color"
               control={form.control}

@@ -2,26 +2,27 @@ import Wrapper from "./Wrapper";
 import HGrid from "./HGrid";
 import Event from "./Event";
 import { hours, days } from "../dates";
+import type { eventType, calendarStyles } from "@/lib/types";
 
-const events = [
-  {
-    class_code: "CIS 2101",
-    name: "Data Structs and Algos",
-    group: 1,
-    classroom: "LB446TC",
-    day: "Tue",
-    start: "7:30",
-    end: "10:00",
-    bg_color: "#3d4066",
-    text_color: "#ffffff",
-  },
-];
+type eventProps = {
+  events: eventType[];
+  styles: calendarStyles;
+};
 
-export default function Calendar() {
+export default function Calendar({ events, styles }: eventProps) {
+  const {
+    wrapper_color = "#83a485",
+    day_color = "#83a485",
+    grid_color = "#090c1b",
+  } = styles;
+
   return (
     <>
-      <div className="bg-[#83a485] p-8 rounded-3xl">
-        <Wrapper>
+      <div
+        className="p-8 rounded-3xl"
+        style={{ backgroundColor: wrapper_color }}
+      >
+        <Wrapper background_color={grid_color}>
           <div className="flex w-250">
             <div className="w-15" />
             <div className="flex-1 justify-around">
@@ -29,7 +30,8 @@ export default function Calendar() {
                 {days.map((day) => (
                   <div
                     key={day}
-                    className="text-white font-bold text-center text-[10px] bg-[#83a485] p-2 rounded-2xl mt-2 mb-2"
+                    className="text-white font-bold text-center text-[13px] p-2 rounded-2xl mt-2 mb-2"
+                    style={{ backgroundColor: day_color }}
                   >
                     {day}
                   </div>

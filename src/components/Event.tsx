@@ -3,7 +3,7 @@ type EventItem = {
   name: string;
   group: number;
   classroom: string;
-  day: string;
+  day: string[];
   start: string;
   end: string;
   bg_color: string;
@@ -38,7 +38,7 @@ export default function EventComponent({ events, currentDay }: EventProps) {
   return (
     <>
       {events
-        .filter((e) => e.day === currentDay)
+        .filter((e) => e.day.includes(currentDay))
         .map((e) => {
           const { top, heightPx } = getEventStyle(e.start, e.end);
 
@@ -48,7 +48,7 @@ export default function EventComponent({ events, currentDay }: EventProps) {
 
           return (
             <div
-              key={`${e.name}-${e.start}`}
+              key={`${e.name}-${e.start}-${e.day}`}
               style={{
                 top,
                 height: `${heightPx}px`,
