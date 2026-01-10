@@ -5,6 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 @source "../node_modules/@ilamy/calendar/dist";
 
+@font-face {
+  font-family: "Anton";
+  src: url("./assets/Anton-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

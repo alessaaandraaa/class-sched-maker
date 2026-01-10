@@ -32,17 +32,31 @@ export default function Main() {
 
   const handleDownload = () => {
     if (!cardRef.current) return;
+
+    const scale = 4;
+
+    const node = cardRef.current;
+    const width = node.offsetWidth;
+    const height = node.offsetHeight;
+
     domtoimage
-      .toPng(cardRef.current)
+      .toPng(node, {
+        width: width * scale,
+        height: height * scale,
+        style: {
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+          width: `${width}px`,
+          height: `${height}px`,
+        },
+      })
       .then((dataUrl) => {
         const link = document.createElement("a");
         link.href = dataUrl;
         link.download = "schedule.png";
         link.click();
       })
-      .catch((error) => {
-        console.error("Error generating image:", error);
-      });
+      .catch((err) => console.error(err));
   };
 
   return (

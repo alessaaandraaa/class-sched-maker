@@ -44,11 +44,11 @@ export default function Calendar({ events, styles }: eventProps) {
             <div className="flex flex-col pt-1">
               {hours.map((hour, index) =>
                 index % 2 == 0 ? (
-                  <div key={hour} className="h-4.5 text-white text-xs">
+                  <div key={hour} className="h-5.5 text-white text-xs">
                     {hour}
                   </div>
                 ) : (
-                  <div key={hour} className="h-4.5"></div>
+                  <div key={hour} className="h-5.5"></div>
                 )
               )}
             </div>
@@ -59,7 +59,7 @@ export default function Calendar({ events, styles }: eventProps) {
                   {hours.map((_, i) => (
                     <div
                       key={i}
-                      className="h-4.5 border-b border-gray-700/30 w-full"
+                      className="h-5.5 border-b border-gray-700/30 w-full"
                     />
                   ))}
 

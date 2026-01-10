@@ -26,7 +26,7 @@ export default function EventComponent({ events, currentDay }: EventProps) {
     const endMin = getMinutesFromStart(end);
     const durationMin = endMin - startMin;
 
-    const PIXELS_PER_MIN = 18 / 30;
+    const PIXELS_PER_MIN = 22 / 30;
     const heightPx = durationMin * PIXELS_PER_MIN;
 
     return {
@@ -35,6 +35,9 @@ export default function EventComponent({ events, currentDay }: EventProps) {
     };
   };
 
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(max, Math.max(min, value));
+
   return (
     <>
       {events
@@ -42,9 +45,8 @@ export default function EventComponent({ events, currentDay }: EventProps) {
         .map((e) => {
           const { top, heightPx } = getEventStyle(e.start, e.end);
 
-          // Dynamic font sizes
-          const mainFontSize = Math.max(6, heightPx * 0.15); // class code + name
-          const secondaryFontSize = Math.max(5, heightPx * 0.12); // group/classroom + time
+          const mainFontSize = clamp(heightPx * 0.16, 8, 17);
+          const secondaryFontSize = clamp(heightPx * 0.12, 7, 13);
 
           return (
             <div
@@ -54,8 +56,9 @@ export default function EventComponent({ events, currentDay }: EventProps) {
                 height: `${heightPx}px`,
                 backgroundColor: e.bg_color,
                 color: e.text_color,
+                fontFamily: "Anton, sans-serif",
               }}
-              className={`absolute w-[95%] left-[2.5%] rounded p-1 flex flex-col justify-center items-center text-center leading-tight shadow-sm z-10 ${e.text_color}`}
+              className={`absolute w-[95%] left-[2.5%] flex flex-col justify-center items-center text-center leading-tight shadow-sm z-10 ${e.text_color}`}
             >
               {/* Main Info */}
               <div
