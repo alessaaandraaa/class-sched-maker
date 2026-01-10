@@ -59,10 +59,6 @@ export function EventForm({ onAddEvent }: formProps) {
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Submitting...");
 
-    const events: eventType[] = JSON.parse(
-      localStorage.getItem("events") || "[]"
-    );
-
     const { startHour, startMinute, endHour, endMinute, ...rest } = data;
 
     const payload = {
@@ -185,7 +181,7 @@ export function EventForm({ onAddEvent }: formProps) {
               name="day"
               control={form.control}
               defaultValue={[]}
-              render={({ field, fieldState }) => (
+              render={({ field }) => (
                 <div className="flex flex-col gap-2">
                   <FieldLabel>Days</FieldLabel>
 
