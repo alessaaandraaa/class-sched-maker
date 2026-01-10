@@ -65,6 +65,7 @@ export function EventForm({ onAddEvent }: formProps) {
       ...rest,
       start: `${String(startHour).padStart(2, "0")}:${startMinute}`,
       end: `${String(endHour).padStart(2, "0")}:${endMinute}`,
+      id: crypto.randomUUID(),
     };
 
     onAddEvent(payload);

@@ -4,6 +4,7 @@ import Calendar from "./Calendar";
 import { EventForm } from "./Form";
 import domtoimage from "dom-to-image";
 import ColorDialog from "./ColorDialog";
+import DeleteDialog from "./DeleteDialog";
 import { Button } from "./ui/button";
 import type { calendarStyles } from "@/lib/types";
 
@@ -26,6 +27,11 @@ export default function Main() {
 
   const addStyle = (style: calendarStyles) => {
     setStyles(style);
+  };
+
+  const deleteEvents = () => {
+    setEvents([]);
+    localStorage.setItem("events", JSON.stringify([]));
   };
 
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -70,14 +76,19 @@ export default function Main() {
             <Calendar events={events} styles={styles} />
           </div>
 
-          <div className="flex gap-3">
-            <Button
-              onClick={handleDownload}
-              className="mt-4 bg-white text-black px-4 py-2 rounded"
-            >
-              Download as Image
-            </Button>
-            <ColorDialog onAddStyle={addStyle} />
+          <div className="flex gap-10 justify-between items-center">
+            <div className="flex gap-3">
+              <Button
+                onClick={handleDownload}
+                className="mt-4 bg-white text-black px-4 py-2 rounded"
+              >
+                Download as Image
+              </Button>
+              <ColorDialog onAddStyle={addStyle} />
+            </div>
+            <div>
+              <DeleteDialog onDeleteEvents={deleteEvents} />
+            </div>
           </div>
         </div>
       </div>

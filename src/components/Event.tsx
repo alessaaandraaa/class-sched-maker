@@ -25,8 +25,11 @@ export default function EventComponent({ events, currentDay }: EventProps) {
     const startMin = getMinutesFromStart(start);
     const endMin = getMinutesFromStart(end);
     const durationMin = endMin - startMin;
+    const slotHeight =
+      document.querySelector(".time-slot")?.getBoundingClientRect().height ??
+      22;
 
-    const PIXELS_PER_MIN = 22 / 30;
+    const PIXELS_PER_MIN = slotHeight / 30;
     const heightPx = durationMin * PIXELS_PER_MIN;
 
     return {

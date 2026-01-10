@@ -59,7 +59,7 @@ export default function Calendar({ events, styles }: eventProps) {
                   {hours.map((_, i) => (
                     <div
                       key={i}
-                      className="h-5.5 border-b border-gray-700/30 w-full"
+                      className="h-5.5 border-b time-slot border-gray-700/30 w-full"
                     />
                   ))}
 

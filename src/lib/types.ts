@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 export const formSchema = z.object({
+  id: z.string(),
   class_code: z.string().min(2, "Class code is too short."),
   name: z.string(),
   group: z.number(),
