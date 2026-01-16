@@ -1,17 +1,19 @@
 import { useState, useRef } from "react";
 import type { eventType } from "@/lib/types";
 import Calendar from "./Calendar";
-import { EventForm } from "./Form";
 import domtoimage from "dom-to-image";
 import ColorDialog from "./ColorDialog";
 import DeleteDialog from "./DeleteDialog";
 import { Button } from "./ui/button";
 import type { calendarStyles } from "@/lib/types";
+//import { FormTabs } from "./FormTabs";
+import { AddEventForm } from "./AddForm";
 
 export default function Main() {
   const [events, setEvents] = useState<eventType[]>(() => {
     return JSON.parse(localStorage.getItem("events") || "[]");
   });
+  const [eventEdit, setEventEdit] = useState<eventType | null>(null);
 
   const [styles, setStyles] = useState<calendarStyles>({
     wrapper_color: "#83a485",
@@ -23,6 +25,24 @@ export default function Main() {
     const next = [...events, event];
     setEvents(next);
     localStorage.setItem("events", JSON.stringify(next));
+  };
+
+  const onSetEventEdit = (event: eventType) => {
+    setEventEdit(event);
+  };
+
+  const editEvent = (editedEvent: eventType) => {
+    const nextEvents = events.map((e) =>
+      e.id === editedEvent.id ? editedEvent : e
+    );
+
+    setEvents(nextEvents);
+    localStorage.setItem("events", JSON.stringify(nextEvents));
+    setEventEdit(null);
+  };
+
+  const cancelEdit = () => {
+    setEventEdit(null);
   };
 
   const addStyle = (style: calendarStyles) => {
@@ -68,12 +88,21 @@ export default function Main() {
   return (
     <div className="p-10 flex gap-10 cursor-pointer group select-none">
       <div>
-        <EventForm onAddEvent={addEvent} />
+        <AddEventForm
+          onAddEvent={addEvent}
+          onEditEvent={editEvent}
+          onCancelEdit={cancelEdit}
+          eventEdit={eventEdit}
+        />
       </div>
       <div>
         <div>
           <div ref={cardRef}>
-            <Calendar events={events} styles={styles} />
+            <Calendar
+              events={events}
+              styles={styles}
+              onSetEvent={onSetEventEdit}
+            />
           </div>
 
           <div className="flex gap-10 justify-between items-center">

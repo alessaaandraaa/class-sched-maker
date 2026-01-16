@@ -1,15 +1,16 @@
 import Wrapper from "./Wrapper";
 import HGrid from "./HGrid";
-import Event from "./Event";
+import ClassEventsList from "./ClassEvents";
 import { hours, days } from "../dates";
 import type { eventType, calendarStyles } from "@/lib/types";
 
 type eventProps = {
   events: eventType[];
   styles: calendarStyles;
+  onSetEvent: (event: eventType) => void;
 };
 
-export default function Calendar({ events, styles }: eventProps) {
+export default function Calendar({ events, styles, onSetEvent }: eventProps) {
   const {
     wrapper_color = "#83a485",
     day_color = "#83a485",
@@ -63,7 +64,11 @@ export default function Calendar({ events, styles }: eventProps) {
                     />
                   ))}
 
-                  <Event events={events} currentDay={day} />
+                  <ClassEventsList
+                    events={events}
+                    currentDay={day}
+                    onSetEvent={onSetEvent}
+                  />
                 </div>
               ))}
             </div>

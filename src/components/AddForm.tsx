@@ -1,8 +1,11 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { formSchema } from "../lib/types";
 import * as z from "zod";
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button";
 import { HexColorPicker } from "react-colorful";
 import {
   Card,
@@ -10,19 +13,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "./ui/card";
 import { days } from "@/dates";
 import { Checkbox } from "./ui/checkbox";
 import type { eventType } from "../lib/types";
 
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../components/ui/field";
-import { Input } from "../components/ui/input";
-import { InputGroup, InputGroupTextarea } from "../components/ui/input-group";
+import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
+import { Input } from "./ui/input";
+import { InputGroup } from "./ui/input-group";
 
 import {
   Select,
@@ -36,9 +34,32 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 type formProps = {
   onAddEvent: (event: eventType) => void;
+  onEditEvent: (event: eventType) => void;
+  onCancelEdit: () => void;
+  eventEdit: eventType | null;
 };
 
-export function EventForm({ onAddEvent }: formProps) {
+export function AddEventForm({
+  onAddEvent,
+  onEditEvent,
+  onCancelEdit,
+  eventEdit,
+}: formProps) {
+  const defaultVals = {
+    id: "",
+    class_code: "",
+    name: "",
+    group: 0,
+    classroom: "",
+    day: [] as string[],
+    startHour: 0,
+    startMinute: "00" as "00" | "30",
+    endHour: 0,
+    endMinute: "00" as "00" | "30",
+    bg_color: "",
+    text_color: "",
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,21 +81,59 @@ export function EventForm({ onAddEvent }: formProps) {
     console.log("Submitting...");
 
     const { startHour, startMinute, endHour, endMinute, ...rest } = data;
-
-    const payload = {
-      ...rest,
-      start: `${String(startHour).padStart(2, "0")}:${startMinute}`,
-      end: `${String(endHour).padStart(2, "0")}:${endMinute}`,
-      id: crypto.randomUUID(),
-    };
-
-    onAddEvent(payload);
+    if (!eventEdit) {
+      const payload = {
+        ...rest,
+        start: `${String(startHour).padStart(2, "0")}:${startMinute}`,
+        end: `${String(endHour).padStart(2, "0")}:${endMinute}`,
+        id: crypto.randomUUID(),
+      };
+      onAddEvent(payload);
+    } else {
+      const payload = {
+        ...rest,
+        start: `${String(startHour).padStart(2, "0")}:${startMinute}`,
+        end: `${String(endHour).padStart(2, "0")}:${endMinute}`,
+      };
+      onEditEvent(payload);
+    }
   }
+
+  useEffect(() => {
+    if (eventEdit) {
+      const [startHr, startMin] = eventEdit.start.split(":");
+      const [endHr, endMin] = eventEdit.end.split(":");
+
+      const startHrV = Number(startHr);
+      const endHrV = Number(endHr);
+      const startMinV = startMin as "00" | "30";
+      const endMinV = endMin as "00" | "30";
+
+      const editData = {
+        id: eventEdit.id,
+        class_code: eventEdit.class_code,
+        name: eventEdit.name,
+        group: eventEdit.group,
+        classroom: eventEdit.classroom,
+        day: eventEdit.day,
+        startHour: startHrV,
+        startMinute: startMinV,
+        endHour: endHrV,
+        endMinute: endMinV,
+        bg_color: eventEdit.bg_color,
+        text_color: eventEdit.text_color,
+      };
+
+      form.reset(editData);
+    } else {
+      form.reset(defaultVals);
+    }
+  }, [form, eventEdit]);
 
   return (
     <Card className="w-full min-w-xs gap-0.5">
       <CardHeader>
-        <CardTitle>ADD CLASS SCHEDULE</CardTitle>
+        <CardTitle>{!eventEdit ? "ADD" : "EDIT"} CLASS SCHEDULE</CardTitle>
       </CardHeader>
       <CardContent>
         <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
@@ -112,11 +171,10 @@ export function EventForm({ onAddEvent }: formProps) {
                     Class Name
                   </FieldLabel>
                   <InputGroup>
-                    <InputGroupTextarea
+                    <Input
                       {...field}
                       id="form-rhf-demo-name"
                       placeholder="Data Structures and Algorithms"
-                      rows={6}
                       aria-invalid={fieldState.invalid}
                     />
                   </InputGroup>
@@ -390,6 +448,9 @@ export function EventForm({ onAddEvent }: formProps) {
           </Button>
           <Button type="submit" form="form-rhf-demo" className="text-black">
             Submit
+          </Button>
+          <Button className="text-black" onClick={onCancelEdit}>
+            Cancel
           </Button>
         </Field>
       </CardFooter>

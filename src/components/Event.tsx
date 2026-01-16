@@ -1,21 +1,11 @@
-type EventItem = {
-  class_code: string;
-  name: string;
-  group: number;
-  classroom: string;
-  day: string[];
-  start: string;
-  end: string;
-  bg_color: string;
-  text_color: string;
+import type { eventType } from "@/lib/types";
+
+type eventProps = {
+  event: eventType;
+  onSetEvent: (event: eventType) => void;
 };
 
-type EventProps = {
-  events: EventItem[];
-  currentDay: string;
-};
-
-export default function EventComponent({ events, currentDay }: EventProps) {
+export default function Event({ event, onSetEvent }: eventProps) {
   const getMinutesFromStart = (timeStr: string) => {
     const [h, m] = timeStr.split(":").map(Number);
     return h * 60 + m - 7 * 60;
@@ -40,55 +30,39 @@ export default function EventComponent({ events, currentDay }: EventProps) {
 
   const clamp = (value: number, min: number, max: number) =>
     Math.min(max, Math.max(min, value));
+  const { top, heightPx } = getEventStyle(event.start, event.end);
 
+  const mainFontSize = clamp(heightPx * 0.16, 8, 17);
+  const secondaryFontSize = clamp(heightPx * 0.12, 7, 13);
   return (
-    <>
-      {events
-        .filter((e) => e.day.includes(currentDay))
-        .map((e) => {
-          const { top, heightPx } = getEventStyle(e.start, e.end);
+    <div
+      style={{
+        top,
+        height: `${heightPx}px`,
+        backgroundColor: event.bg_color,
+        color: event.text_color,
+        fontFamily: "Anton, sans-serif",
+      }}
+      className={` hover:ring-2 absolute w-[95%] left-[2.5%] flex flex-col justify-center items-center text-center leading-tight shadow-sm z-10 ${event.text_color}`}
+      onClick={() => onSetEvent(event)}
+    >
+      {/* Main Info */}
+      <div className="font-black" style={{ fontSize: `${mainFontSize}px` }}>
+        {event.class_code}
+      </div>
+      <div className="font-black" style={{ fontSize: `${mainFontSize}px` }}>
+        {event.name}
+      </div>
 
-          const mainFontSize = clamp(heightPx * 0.16, 8, 17);
-          const secondaryFontSize = clamp(heightPx * 0.12, 7, 13);
-
-          return (
-            <div
-              key={`${e.name}-${e.start}-${e.day}`}
-              style={{
-                top,
-                height: `${heightPx}px`,
-                backgroundColor: e.bg_color,
-                color: e.text_color,
-                fontFamily: "Anton, sans-serif",
-              }}
-              className={`absolute w-[95%] left-[2.5%] flex flex-col justify-center items-center text-center leading-tight shadow-sm z-10 ${e.text_color}`}
-            >
-              {/* Main Info */}
-              <div
-                className="font-black"
-                style={{ fontSize: `${mainFontSize}px` }}
-              >
-                {e.class_code}
-              </div>
-              <div
-                className="font-black"
-                style={{ fontSize: `${mainFontSize}px` }}
-              >
-                {e.name}
-              </div>
-
-              {/* Secondary Info */}
-              <div style={{ fontSize: `${secondaryFontSize}px` }}>
-                <p>
-                  Grp. {e.group} - {e.classroom}
-                </p>
-                <p>
-                  {e.start} - {e.end}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-    </>
+      {/* Secondary Info */}
+      <div style={{ fontSize: `${secondaryFontSize}px` }}>
+        <p>
+          Grp. {event.group} - {event.classroom}
+        </p>
+        <p>
+          {event.start} - {event.end}
+        </p>
+      </div>
+    </div>
   );
 }

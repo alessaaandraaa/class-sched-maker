@@ -43,6 +43,7 @@ export type calendarStyles = {
 };
 
 export type eventType = {
+  id: string;
   class_code: string;
   name: string;
   group: number;
