@@ -33,7 +33,7 @@ export default function Main() {
 
   const editEvent = (editedEvent: eventType) => {
     const nextEvents = events.map((e) =>
-      e.id === editedEvent.id ? editedEvent : e
+      e.id === editedEvent.id ? editedEvent : e,
     );
 
     setEvents(nextEvents);
@@ -52,6 +52,15 @@ export default function Main() {
   const deleteEvents = () => {
     setEvents([]);
     localStorage.setItem("events", JSON.stringify([]));
+  };
+
+  const deleteEvent = (delEvent: eventType) => {
+    const afterDeleteEvents = events.filter(
+      (e: eventType) => e.id !== delEvent.id,
+    );
+    setEvents(afterDeleteEvents);
+    localStorage.setItem("events", JSON.stringify(afterDeleteEvents));
+    setEventEdit(null);
   };
 
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -92,6 +101,7 @@ export default function Main() {
           onAddEvent={addEvent}
           onEditEvent={editEvent}
           onCancelEdit={cancelEdit}
+          onDeleteEvent={deleteEvent}
           eventEdit={eventEdit}
         />
       </div>

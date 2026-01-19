@@ -35,6 +35,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 type formProps = {
   onAddEvent: (event: eventType) => void;
   onEditEvent: (event: eventType) => void;
+  onDeleteEvent: (event: eventType) => void;
   onCancelEdit: () => void;
   eventEdit: eventType | null;
 };
@@ -43,6 +44,7 @@ export function AddEventForm({
   onAddEvent,
   onEditEvent,
   onCancelEdit,
+  onDeleteEvent,
   eventEdit,
 }: formProps) {
   const defaultVals = {
@@ -56,8 +58,8 @@ export function AddEventForm({
     startMinute: "00" as "00" | "30",
     endHour: 0,
     endMinute: "00" as "00" | "30",
-    bg_color: "",
-    text_color: "",
+    bg_color: "#38b2d6",
+    text_color: "#000000",
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,6 +90,7 @@ export function AddEventForm({
         end: `${String(endHour).padStart(2, "0")}:${endMinute}`,
         id: crypto.randomUUID(),
       };
+      console.log("adding event...");
       onAddEvent(payload);
     } else {
       const payload = {
@@ -129,6 +132,12 @@ export function AddEventForm({
       form.reset(defaultVals);
     }
   }, [form, eventEdit]);
+
+  const deleteEvent = async () => {
+    if (eventEdit) onDeleteEvent(eventEdit);
+  };
+
+  console.log("Form Errors:", form.formState.errors);
 
   return (
     <Card className="w-full min-w-xs gap-0.5">
@@ -267,7 +276,7 @@ export function AddEventForm({
                               const newValue = checked
                                 ? [...(field.value || []), dayName]
                                 : field.value?.filter(
-                                    (v: string) => v !== dayName
+                                    (v: string) => v !== dayName,
                                   );
                               field.onChange(newValue);
                             }}
@@ -443,15 +452,50 @@ export function AddEventForm({
       </CardContent>
       <CardFooter>
         <Field orientation="horizontal">
-          <Button type="button" variant="outline" onClick={() => form.reset()}>
-            Reset
-          </Button>
-          <Button type="submit" form="form-rhf-demo" className="text-black">
-            Submit
-          </Button>
-          <Button className="text-black" onClick={onCancelEdit}>
-            Cancel
-          </Button>
+          {!eventEdit ? (
+            <div className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => form.reset()}
+              >
+                Reset
+              </Button>
+              <Button type="submit" form="form-rhf-demo" className="text-black">
+                Submit
+              </Button>
+            </div>
+          ) : (
+            <div className="pt-2 flex flex-col justify-between">
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => form.reset()}
+                >
+                  Reset
+                </Button>
+                <Button
+                  type="submit"
+                  form="form-rhf-demo"
+                  className="text-black"
+                >
+                  Submit
+                </Button>
+              </div>
+              <div>
+                <Button className="text-black" onClick={onCancelEdit}>
+                  Cancel
+                </Button>
+                <Button
+                  className="outline-destructive text-black"
+                  onClick={deleteEvent}
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+          )}
         </Field>
       </CardFooter>
     </Card>
