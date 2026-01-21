@@ -1,16 +1,22 @@
 import Wrapper from "./Wrapper";
 import HGrid from "./HGrid";
 import ClassEventsList from "./ClassEvents";
-import { hours, days } from "../dates";
+import { days } from "../dates";
 import type { eventType, calendarStyles } from "@/lib/types";
 
 type eventProps = {
   events: eventType[];
   styles: calendarStyles;
+  hours: String[];
   onSetEvent: (event: eventType) => void;
 };
 
-export default function Calendar({ events, styles, onSetEvent }: eventProps) {
+export default function Calendar({
+  events,
+  styles,
+  hours,
+  onSetEvent,
+}: eventProps) {
   const {
     wrapper_color = "#83a485",
     day_color = "#83a485",
@@ -45,12 +51,15 @@ export default function Calendar({ events, styles, onSetEvent }: eventProps) {
             <div className="flex flex-col pt-1">
               {hours.map((hour, index) =>
                 index % 2 == 0 ? (
-                  <div key={hour} className="h-5.5 text-white text-xs">
+                  <div
+                    key={`${hour}-${index}`}
+                    className="h-5.5 text-white text-xs"
+                  >
                     {hour}
                   </div>
                 ) : (
-                  <div key={hour} className="h-5.5"></div>
-                )
+                  <div key={`${hour}-${index}`} className="h-5.5"></div>
+                ),
               )}
             </div>
 

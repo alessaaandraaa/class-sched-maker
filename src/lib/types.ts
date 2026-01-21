@@ -34,6 +34,10 @@ export const ColorSchema = z.object({
     message:
       "Invalid color format. Must be a 7-character hex code (e.g., #RRGGBB).",
   }),
+  minHour: z.number().int().min(7).max(21),
+  minMinute: z.enum(["00", "30"]),
+  maxHour: z.number().int().min(7).max(21),
+  maxMinute: z.enum(["00", "30"]),
 });
 
 export type calendarStyles = {

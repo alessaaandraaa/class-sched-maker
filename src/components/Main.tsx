@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import type { calendarStyles } from "@/lib/types";
 //import { FormTabs } from "./FormTabs";
 import { AddEventForm } from "./AddForm";
+import { hours } from "@/dates";
 
 export default function Main() {
   const [events, setEvents] = useState<eventType[]>(() => {
@@ -20,6 +21,8 @@ export default function Main() {
     day_color: "#83a485",
     grid_color: "#090c1b",
   });
+
+  const [hourList, setHourList] = useState<String[]>(hours);
 
   const addEvent = (event: eventType) => {
     const next = [...events, event];
@@ -52,6 +55,10 @@ export default function Main() {
   const deleteEvents = () => {
     setEvents([]);
     localStorage.setItem("events", JSON.stringify([]));
+  };
+
+  const addHours = (hrs: String[]) => {
+    setHourList(hrs);
   };
 
   const deleteEvent = (delEvent: eventType) => {
@@ -95,7 +102,7 @@ export default function Main() {
   };
 
   return (
-    <div className="p-10 flex gap-10 cursor-pointer group select-none">
+    <div className="p-10 flex gap-10 cursor-pointer group select-none w-full min-w-fit bg-black">
       <div>
         <AddEventForm
           onAddEvent={addEvent}
@@ -112,6 +119,7 @@ export default function Main() {
               events={events}
               styles={styles}
               onSetEvent={onSetEventEdit}
+              hours={hourList}
             />
           </div>
 
@@ -123,7 +131,7 @@ export default function Main() {
               >
                 Download as Image
               </Button>
-              <ColorDialog onAddStyle={addStyle} />
+              <ColorDialog onAddStyle={addStyle} onAddHours={addHours} />
             </div>
             <div>
               <DeleteDialog onDeleteEvents={deleteEvents} />
