@@ -4,6 +4,7 @@ import Calendar from "./Calendar";
 import domtoimage from "dom-to-image";
 import ColorDialog from "./ColorDialog";
 import DeleteDialog from "./DeleteDialog";
+import PDFDialog from "./PDFDialog";
 import { Button } from "./ui/button";
 import type { calendarStyles } from "@/lib/types";
 //import { FormTabs } from "./FormTabs";
@@ -25,9 +26,13 @@ export default function Main() {
   const [hourList, setHourList] = useState<String[]>(hours);
 
   const addEvent = (event: eventType) => {
-    const next = [...events, event];
-    setEvents(next);
-    localStorage.setItem("events", JSON.stringify(next));
+    setEvents((prevEvents) => {
+      const updatedEvents = [...prevEvents, event];
+
+      localStorage.setItem("events", JSON.stringify(updatedEvents));
+
+      return updatedEvents;
+    });
   };
 
   const onSetEventEdit = (event: eventType) => {
@@ -132,6 +137,7 @@ export default function Main() {
                 Download as Image
               </Button>
               <ColorDialog onAddStyle={addStyle} onAddHours={addHours} />
+              <PDFDialog onAddEvent={addEvent}></PDFDialog>
             </div>
             <div>
               <DeleteDialog onDeleteEvents={deleteEvents} />

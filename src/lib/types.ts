@@ -40,6 +40,10 @@ export const ColorSchema = z.object({
   maxMinute: z.enum(["00", "30"]),
 });
 
+export const pdfFormSchema = z.object({
+  file: z.instanceof(FileList).optional(),
+});
+
 export type calendarStyles = {
   wrapper_color: string;
   day_color: string;
