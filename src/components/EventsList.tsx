@@ -2,7 +2,6 @@ import type { eventType } from "@/lib/types";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";

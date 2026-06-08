@@ -87,7 +87,7 @@ export default function PDFDialog({ onAddEvent }: PDFprops) {
             <FormField
               control={form.control}
               name="file"
-              render={({ field }) => {
+              render={() => {
                 return (
                   <FormItem>
                     <FormLabel>File</FormLabel>
