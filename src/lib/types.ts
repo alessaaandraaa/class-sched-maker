@@ -38,6 +38,7 @@ export const ColorSchema = z.object({
   minMinute: z.enum(["00", "30"]),
   maxHour: z.number().int().min(7).max(21),
   maxMinute: z.enum(["00", "30"]),
+  calendarWidth: z.number().min(400).max(2000)
 });
 
 export const pdfFormSchema = z.object({
@@ -48,6 +49,7 @@ export type calendarStyles = {
   wrapper_color: string;
   day_color: string;
   grid_color: string;
+  calendarWidth: number;
 };
 
 export type eventType = {

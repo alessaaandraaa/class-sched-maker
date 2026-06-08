@@ -41,6 +41,7 @@ export default function ColorDialog({ onAddStyle, onAddHours }: DialogProps) {
       minMinute: "00",
       maxHour: 18,
       maxMinute: "00",
+      calendarWidth: 800
     },
   });
 
@@ -299,6 +300,21 @@ export default function ColorDialog({ onAddStyle, onAddHours }: DialogProps) {
                   )}
                 />
               </div>
+              <FieldLabel>Calendar Width (px)</FieldLabel>
+              <Controller
+                name="calendarWidth"
+                control={form.control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="number"
+                    min={400}
+                    max={2000}
+                    className="w-24"
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
+                )}
+              />
             </FieldGroup>
           </div>
         </form>

@@ -21,6 +21,7 @@ export default function Main() {
     wrapper_color: "#83a485",
     day_color: "#83a485",
     grid_color: "#090c1b",
+    calendarWidth: 800,
   });
 
   const [hourList, setHourList] = useState<String[]>(hours);
@@ -107,8 +108,8 @@ export default function Main() {
   };
 
   return (
-    <div className="p-10 flex gap-10 cursor-pointer group select-none w-full min-w-fit bg-black">
-      <div>
+    <div className="p-10 flex gap-10 select-none w-full max-w-screen-2xl">
+      <div className="w-fit shrink-0">
         <AddEventForm
           onAddEvent={addEvent}
           onEditEvent={editEvent}
@@ -117,8 +118,8 @@ export default function Main() {
           eventEdit={eventEdit}
         />
       </div>
-      <div>
-        <div>
+ 
+        <div className=" flex flex-col gap-4" style={{ width: `${styles.calendarWidth}px` }}>
           <div ref={cardRef}>
             <Calendar
               events={events}
@@ -128,7 +129,7 @@ export default function Main() {
             />
           </div>
 
-          <div className="flex gap-10 justify-between items-center">
+          <div className="flex justify-between items-center">
             <div className="flex gap-3">
               <Button
                 onClick={handleDownload}
@@ -145,6 +146,6 @@ export default function Main() {
           </div>
         </div>
       </div>
-    </div>
+ 
   );
 }

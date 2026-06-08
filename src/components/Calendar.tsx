@@ -30,7 +30,7 @@ export default function Calendar({
         style={{ backgroundColor: wrapper_color }}
       >
         <Wrapper background_color={grid_color}>
-          <div className="flex w-250">
+          <div className="flex w-full">
             <div className="w-15" />
             <div className="flex-1 justify-around">
               <HGrid columns={6}>
