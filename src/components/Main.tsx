@@ -1,80 +1,33 @@
-import { useState, useRef } from "react";
-import type { eventType } from "@/lib/types";
+import { useRef } from "react";
 import Calendar from "./Calendar";
 import domtoimage from "dom-to-image";
-import ColorDialog from "./ColorDialog";
-import DeleteDialog from "./DeleteDialog";
-import PDFDialog from "./PDFDialog";
+import ColorDialog from "./dialogs/ColorDialog";
+import DeleteDialog from "./dialogs/DeleteDialog";
+import ShareDialog from "./dialogs/ShareDialog";
+import PDFDialog from "./dialogs/PDFDialog";
+import LoadDialog from "./dialogs/LoadDialog";
 import { Button } from "./ui/button";
-import type { calendarStyles } from "@/lib/types";
-//import { FormTabs } from "./FormTabs";
 import { AddEventForm } from "./AddForm";
-import { hours } from "@/dates";
+import { useCalendar } from "@/lib/useCalendar";
+import { toast } from "sonner"
 
 export default function Main() {
-  const [events, setEvents] = useState<eventType[]>(() => {
-    return JSON.parse(localStorage.getItem("events") || "[]");
-  });
-  const [eventEdit, setEventEdit] = useState<eventType | null>(null);
-
-  const [styles, setStyles] = useState<calendarStyles>({
-    wrapper_color: "#83a485",
-    day_color: "#83a485",
-    grid_color: "#090c1b",
-    calendarWidth: 800,
-  });
-
-  const [hourList, setHourList] = useState<String[]>(hours);
-
-  const addEvent = (event: eventType) => {
-    setEvents((prevEvents) => {
-      const updatedEvents = [...prevEvents, event];
-
-      localStorage.setItem("events", JSON.stringify(updatedEvents));
-
-      return updatedEvents;
-    });
-  };
-
-  const onSetEventEdit = (event: eventType) => {
-    setEventEdit(event);
-  };
-
-  const editEvent = (editedEvent: eventType) => {
-    const nextEvents = events.map((e) =>
-      e.id === editedEvent.id ? editedEvent : e,
-    );
-
-    setEvents(nextEvents);
-    localStorage.setItem("events", JSON.stringify(nextEvents));
-    setEventEdit(null);
-  };
-
-  const cancelEdit = () => {
-    setEventEdit(null);
-  };
-
-  const addStyle = (style: calendarStyles) => {
-    setStyles(style);
-  };
-
-  const deleteEvents = () => {
-    setEvents([]);
-    localStorage.setItem("events", JSON.stringify([]));
-  };
-
-  const addHours = (hrs: String[]) => {
-    setHourList(hrs);
-  };
-
-  const deleteEvent = (delEvent: eventType) => {
-    const afterDeleteEvents = events.filter(
-      (e: eventType) => e.id !== delEvent.id,
-    );
-    setEvents(afterDeleteEvents);
-    localStorage.setItem("events", JSON.stringify(afterDeleteEvents));
-    setEventEdit(null);
-  };
+  const {
+    events,
+    styles,
+    hourList,
+    eventEdit,
+    addEvent,
+    editEvent,
+    cancelEdit,
+    onSetEventEdit,
+    addStyle,
+    addHours,
+    deleteEvents,
+    deleteEvent,
+    saveToLocal,
+    loadFromLocal,
+  } = useCalendar();
 
   const cardRef = useRef<HTMLDivElement | null>(null);
 
@@ -108,18 +61,22 @@ export default function Main() {
   };
 
   return (
-    <div className="p-10 flex gap-10 select-none w-full max-w-screen-2xl">
-      <div className="w-fit shrink-0">
-        <AddEventForm
-          onAddEvent={addEvent}
-          onEditEvent={editEvent}
-          onCancelEdit={cancelEdit}
-          onDeleteEvent={deleteEvent}
-          eventEdit={eventEdit}
-        />
-      </div>
- 
-        <div className=" flex flex-col gap-4" style={{ width: `${styles.calendarWidth}px` }}>
+    <div className="p-10 flex flex-col gap-4 select-none w-fit max-w-screen-2xl">
+      <div className="flex gap-10 items-stretch">
+        <div className="w-fit shrink-0 self-stretch">
+          <AddEventForm
+            onAddEvent={addEvent}
+            onEditEvent={editEvent}
+            onCancelEdit={cancelEdit}
+            onDeleteEvent={deleteEvent}
+            eventEdit={eventEdit}
+          />
+        </div>
+
+        <div
+          className=" flex flex-col gap-4"
+          style={{ width: `${styles.calendarWidth}px` }}
+        >
           <div ref={cardRef}>
             <Calendar
               events={events}
@@ -128,24 +85,30 @@ export default function Main() {
               hours={hourList}
             />
           </div>
-
-          <div className="flex justify-between items-center">
-            <div className="flex gap-3">
-              <Button
-                onClick={handleDownload}
-                className="mt-4 bg-white text-black px-4 py-2 rounded"
-              >
-                Download as Image
-              </Button>
-              <ColorDialog onAddStyle={addStyle} onAddHours={addHours} />
-              <PDFDialog onAddEvent={addEvent}></PDFDialog>
-            </div>
-            <div>
-              <DeleteDialog onDeleteEvents={deleteEvents} />
-            </div>
+        </div>
+      </div>
+      <div className="flex justify-between items-center w-full">
+        <div className="flex gap-3">
+          <Button
+            onClick={handleDownload}
+            className="mt-4 bg-white text-black px-4 py-2 rounded text-sm"
+          >
+            Download as Image
+          </Button>
+          <ColorDialog onAddStyle={addStyle} onAddHours={addHours} />
+          <PDFDialog onAddEvent={addEvent}></PDFDialog>
+          <ShareDialog events={events} styles={styles} />
+        </div>
+        <div>
+          <div className="flex gap-3">
+            <Button onClick={() => { saveToLocal(); toast.success("Schedule saved!"); }} className="text-black mt-4">
+            Save
+          </Button>
+            <LoadDialog onLoad={loadFromLocal} />
+            <DeleteDialog onDeleteEvents={deleteEvents} />
           </div>
         </div>
       </div>
- 
+    </div>
   );
 }

@@ -9,9 +9,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Field, FieldGroup, FieldLabel } from "../components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "../../components/ui/field";
 import { ColorSchema } from "@/lib/types";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { HexColorPicker } from "react-colorful";
@@ -23,7 +23,7 @@ import {
   SelectItem,
   SelectValue,
   SelectContent,
-} from "./ui/select";
+} from "../ui/select";
 
 type DialogProps = {
   onAddStyle: (style: calendarStyles) => void;

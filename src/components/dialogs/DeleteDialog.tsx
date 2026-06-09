@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../components/ui/alert-dialog";
+} from "../ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
 type DeleteProps = {
@@ -24,7 +24,7 @@ export default function DeleteDialog({ onDeleteEvents }: DeleteProps) {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button className="bg-red-500! mt-4 px-4 py-2 rounded">
-          Reset Calendar
+          🗑
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

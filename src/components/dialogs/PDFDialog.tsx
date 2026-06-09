@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { pdfFormSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

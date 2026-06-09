@@ -140,7 +140,7 @@ export function AddEventForm({
   console.log("Form Errors:", form.formState.errors);
 
   return (
-    <Card className="w-full min-w-xs gap-0.5">
+    <Card className="w-full min-w-xs gap-0.5 h-full">
       <CardHeader>
         <CardTitle>{!eventEdit ? "ADD" : "EDIT"} CLASS SCHEDULE</CardTitle>
       </CardHeader>
