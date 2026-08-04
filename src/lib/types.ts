@@ -7,9 +7,9 @@ export const formSchema = z.object({
   group: z.number(),
   classroom: z.string(),
   day: z.array(z.string()).min(1, "Select at least one day"),
-  startHour: z.number().int().min(7).max(18),
+  startHour: z.number().int().min(7).max(20),
   startMinute: z.enum(["00", "30"]),
-  endHour: z.number().int().min(7).max(18),
+  endHour: z.number().int().min(7).max(20),
   endMinute: z.enum(["00", "30"]),
   bg_color: z.string().regex(/^#[0-9a-f]{6}$/i, {
     message:
