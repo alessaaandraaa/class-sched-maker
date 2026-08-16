@@ -9,6 +9,7 @@ type eventProps = {
   styles: calendarStyles;
   hours: String[];
   onSetEvent: (event: eventType) => void;
+  minHour: number;
 };
 
 export default function Calendar({
@@ -16,6 +17,7 @@ export default function Calendar({
   styles,
   hours,
   onSetEvent,
+  minHour,
 }: eventProps) {
   const {
     wrapper_color = "#83a485",
@@ -77,6 +79,7 @@ export default function Calendar({
                     events={events}
                     currentDay={day}
                     onSetEvent={onSetEvent}
+                    minHour={minHour}
                   />
                 </div>
               ))}

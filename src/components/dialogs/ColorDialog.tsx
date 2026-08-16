@@ -27,24 +27,24 @@ import {
 
 type DialogProps = {
   onAddStyle: (style: calendarStyles) => void;
-  onAddHours: (hrs: String[]) => void;
+  onAddHours: (hrs: String[], range: HourRange) => void;
+  currentStyles: calendarStyles;
+  currentHourRange: HourRange;
 };
 
-export default function ColorDialog({ onAddStyle, onAddHours }: DialogProps) {
+export default function ColorDialog({
+  onAddStyle,
+  onAddHours,
+  currentStyles,
+  currentHourRange,
+}: DialogProps) {
   const form = useForm<z.infer<typeof ColorSchema>>({
     resolver: zodResolver(ColorSchema),
     defaultValues: {
-      wrapper_color: "#83a485",
-      day_color: "#83a485",
-      grid_color: "#090c1b",
-      minHour: 7,
-      minMinute: "00",
-      maxHour: 18,
-      maxMinute: "00",
-      calendarWidth: 800
+      ...currentStyles,
+      ...currentHourRange,
     },
   });
-
   const generateHours = (
     minHour: number,
     minMinute: string,
@@ -80,7 +80,7 @@ export default function ColorDialog({ onAddStyle, onAddHours }: DialogProps) {
     onAddStyle(stylePayload);
 
     const hoursPayload = generateHours(minHour, minMinute, maxHour, maxMinute);
-    onAddHours(hoursPayload);
+    onAddHours(hoursPayload, { minHour, minMinute, maxHour, maxMinute });
   }
 
   console.log("Form Errors:", form.formState.errors);

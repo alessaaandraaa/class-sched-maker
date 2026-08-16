@@ -3,12 +3,13 @@ import type { eventType } from "@/lib/types";
 type eventProps = {
   event: eventType;
   onSetEvent: (event: eventType) => void;
+  minHour: number;
 };
 
-export default function Event({ event, onSetEvent }: eventProps) {
+export default function Event({ event, onSetEvent, minHour }: eventProps) {
   const getMinutesFromStart = (timeStr: string) => {
     const [h, m] = timeStr.split(":").map(Number);
-    return h * 60 + m - 7 * 60;
+    return h * 60 + m - minHour * 60;
   };
 
   const getEventStyle = (start: string, end: string) => {

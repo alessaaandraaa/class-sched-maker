@@ -9,13 +9,14 @@ import LoadDialog from "./dialogs/LoadDialog";
 import { Button } from "./ui/button";
 import { AddEventForm } from "./AddForm";
 import { useCalendar } from "@/lib/useCalendar";
-import { toast } from "sonner"
+import { toast } from "sonner";
 
 export default function Main() {
   const {
     events,
     styles,
     hourList,
+    hourRange,
     eventEdit,
     addEvent,
     editEvent,
@@ -83,6 +84,7 @@ export default function Main() {
               styles={styles}
               onSetEvent={onSetEventEdit}
               hours={hourList}
+              minHour={hourRange.minHour}
             />
           </div>
         </div>
@@ -95,15 +97,26 @@ export default function Main() {
           >
             Download as Image
           </Button>
-          <ColorDialog onAddStyle={addStyle} onAddHours={addHours} />
+          <ColorDialog
+            onAddStyle={addStyle}
+            onAddHours={addHours}
+            currentStyles={styles}
+            currentHourRange={hourRange}
+          />
           <PDFDialog onAddEvent={addEvent}></PDFDialog>
           <ShareDialog events={events} styles={styles} />
         </div>
         <div>
           <div className="flex gap-3">
-            <Button onClick={() => { saveToLocal(); toast.success("Schedule saved!"); }} className="text-black mt-4">
-            Save
-          </Button>
+            <Button
+              onClick={() => {
+                saveToLocal();
+                toast.success("Schedule saved!");
+              }}
+              className="text-black mt-4"
+            >
+              Save
+            </Button>
             <LoadDialog onLoad={loadFromLocal} />
             <DeleteDialog onDeleteEvents={deleteEvents} />
           </div>
