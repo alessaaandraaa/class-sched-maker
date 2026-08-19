@@ -9,7 +9,7 @@ export const formSchema = z.object({
   day: z.array(z.string()).min(1, "Select at least one day"),
   startHour: z.number().int().min(7).max(20),
   startMinute: z.enum(["00", "30"]),
-  endHour: z.number().int().min(7).max(20),
+  endHour: z.number().int().min(7).max(24),
   endMinute: z.enum(["00", "30"]),
   bg_color: z.string().regex(/^#[0-9a-f]{6}$/i, {
     message:
